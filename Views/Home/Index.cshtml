@@ -1,100 +1,47 @@
 ﻿@{
-	Layout = null;
+	ViewBag.Title = "Index page";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	var lst = ViewData["Lst"] as SelectList;
+
 }
-<!DOCTYPE html>
-<html>
-<head>
-	<meta name="viewport" content="width=device-width" />
-	<title>Index</title>
-	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-	<link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css" />
-	<link rel="stylesheet" href="~/WebLabsV03.UI.styles.css" asp-append-
-		  version="true" />
-		  <style>
-			
-	</style>
-</head>
-<body>
-	<header>
-		<div class="container">
-			<!-- Панель навигации -->
-			
-			<!-- Панель навигации -->
-			<nav class="navbar navbar-expand-md navbar-dark bg-dark">
-				<!-- меню сайта -->
-				<a class="navbar-brand" href="#">Лб 1 </a>
-				<div class="navbar-nav">
-					<a class="nav-item nav-link active" href="#">Юхневич</a>
-					<a class="nav-item nav-link" href="#">Каталог</a>
-					<a class="nav-item nav-link" href="#">Администрирование</a>
-				</div>
-				<!-- меню сайта - конец -->
+
+<!-- Содержимое -->
 
 
-				<!-- Информация пользователя -->
-				<a href="#" class="navbar-text ms-auto">
-					00,0 руб <i class="fa-solid fa-cart-shopping"></i> (0)
-				</a>
-				<div class="dropdown ms-4 nav-color">
-					<button class="btn btn-secondary dropdown-toggle"
-							type="button" id="dropdownMenuButton"
-							data-bs-toggle="dropdown"
-							aria-expanded="false">
-						User@gmail.com
-						<img src="images/image.png" width="30"
-							 alt="User" class="rounded nav-color" />
-					</button>
-					<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-						<li>
-							<span class="dropdown-item-text">
-								<img src="images/image.png"
-									 width="50" alt="User" class="rounded" />
-								user@gmail.com
-							</span>
-						</li>
-						<li><hr class="dropdown-divider"></li>
-						<li>
-							<form id="logoutForm" class="form-inline" action="#">
-								<button id="logout" type="submit" class="nav-link 
-btn btn-link text-dark">
-									Logout
-								</button>
-							</form>
-						</li>
-					</ul>
-				</div>
-				<!-- Информация пользователя - конец -->
-			</nav> <!-- Панель навигации - конец -->
-		</div><!-- container - конец -->
-	</header><!-- header - конец -->
-	<main class="container">
 
-		<h1>Лабораторная работа 1</h1>
 
-		
-		<h2>@ViewData["Text"]</h2>
-		<h2>Список</h2>
 
-		<ol type="A">
-			@for (int i = 1; i < 6; i++)
-			{
-				<li>элемент @i списка</li>
-			}
-		</ol>
+<h2>@ViewData["Text"]</h2>
+<h2>Список</h2>
 
-		<!--ol type="A" class="ms-1">
-			<li>элемент 1 списка</li>
-			<li>элемент 2 списка</li>
-		</ol-->
-		<hr />
-		<h2>Форма</h2>
-		
-		<form method="post">
+<ol type="A">
+	@for (int i = 1; i < 6; i++)
+	{
+		<li>элемент @i списка</li>
+	}
+</ol>
+
+
+<hr />
+<h2>Форма</h2>
+
+<form role="form" method="post" >
+	<select asp-items="@lst" name="list"></select>
+@* 	<div class="row">
+		<div class="col-5m-10 offset-5m-2">
+			<select>
+				<option value="1">Item 1</option>
+				<option value="2">Item 2</option>
+				<option value="3">Item 3</option>
+			</select>
+			</div>
+			</div> *@
+	
 			<table style="width: 100%"  >
 				<colgroup>
 					<col span="1" style="width: 13%;">
 				</colgroup>
+		
 				<tr>
 					<td> </td>
 					<td>
@@ -155,6 +102,7 @@ btn btn-link text-dark">
 					</td>
 				</tr>
 				<tr>
+			
 					<td>
 						<button type="submit" class="btn btn-primary">Отправить</button>
 					</td>
@@ -162,31 +110,3 @@ btn btn-link text-dark">
 			</table>
 		</form>
 
-
-	</main>
-	<footer class="fixed-bottom">
-		<div class="container">
-			
-
-			<div class="navbar navbar-dark navbar-expand-md bg-dark justify-content-end">
-				<div class="navbar-nav ms-auto">
-					<a class="nav-item nav-link" href="http://www.facebook.com">
-						<i class="fa-brands fa-facebook-f fa-2x"></i>
-					</a>
-					<a class="nav-item nav-link" href="http://www.vk.com">
-						<i class="fa-brands fa-vk fa-2x"></i>
-					</a>
-					<a class="nav-item nav-link" href="http://www.twitter.com">
-						<i class="fa-brands fa-twitter fa-2x"></i>
-					</a>
-				</div>
-			</div>
-		</div>
-	</footer>
-	<script src="~/lib/jquery/dist/jquery.min.js"></script>
-	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-	<script src="~/js/site.js" asp-append-version="true"></script>
-</body>
-
-
-</html>
