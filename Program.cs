@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using Yuhnevich_vb_lab.Data;
+using Yuhnevich_vb_lab.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -60,5 +61,7 @@ app.MapControllerRoute(
 
 app.MapRazorPages()
    .WithStaticAssets();
+
+await DbInit.SeedData(app);
 
 app.Run();
