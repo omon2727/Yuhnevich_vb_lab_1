@@ -14,14 +14,12 @@
 			data-bs-toggle="dropdown"
 			aria-expanded="false">
 			@User.Identity.Name
-		<img src="images/image.png" width="30"
-			 alt="User" class="rounded nav-color" />
+			<img src="/Image/GetAvatar?_=@DateTime.Now.Ticks" width="30" alt="User" class="rounded" />
 	</button>
 	<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 		<li>
 			<span class="dropdown-item-text">
-				<img src="images/image.png"
-					 width="50" alt="User" class="rounded" />
+					<img src="/Image/GetAvatar?_=@DateTime.Now.Ticks" width="30" alt="User" class="rounded" />
 					@User.Identity.Name
 			</span>
 		</li>

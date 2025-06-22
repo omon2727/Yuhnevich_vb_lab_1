@@ -22,7 +22,7 @@ namespace Yuhnevich_vb_lab.Controllers
             }
             public IActionResult Index()
             {
-            ViewData["Text"] = "Лабораторная работа 3";
+            ViewData["Text"] = "Лабораторная работа 1-9";
             ViewData["Lst"] = new SelectList(_listData, "Id", "Name");
             
             return View();
