@@ -9,12 +9,12 @@ using Yuhnevich_vb_lab.Services.ProductService;
 
 namespace Yuhnevich_vb_lab.Controllers
 {
-    public class HomeController : Controller
+    public class ProductController : Controller
     {
         private readonly IProductService _productService;
         private readonly ICategoryService _categoryService;
 
-        public HomeController(IProductService productService, ICategoryService categoryService)
+        public ProductController(IProductService productService, ICategoryService categoryService)
         {
             _productService = productService;
             _categoryService = categoryService;
@@ -27,21 +27,33 @@ namespace Yuhnevich_vb_lab.Controllers
             if (!categoryResponse.Success || categoryResponse.Data == null)
             {
                 Console.WriteLine($"Category error: {categoryResponse.ErrorMessage ?? "Data is null"}");
-                ViewData["Categories"] = new SelectList(new List<Category>(), "NormalizedName", "Name");
+                return NotFound(categoryResponse.ErrorMessage ?? "Categories not found.");
             }
-            else
+
+            // Отладка: вывести категории в консоль
+            Console.WriteLine($"Categories count: {categoryResponse.Data.Count}");
+            foreach (var category in categoryResponse.Data)
             {
-                ViewData["Categories"] = new SelectList(categoryResponse.Data, "NormalizedName", "Name", categoryNormalizedName);
+                Console.WriteLine($"Category: {category.Name}, NormalizedName: {category.NormalizedName}");
             }
+
+            // Формирование SelectList
+            var selectList = new SelectList(categoryResponse.Data, "NormalizedName", "Name", categoryNormalizedName);
+            ViewData["Categories"] = selectList;
+
+            // Отладка: проверить содержимое SelectList
+            Console.WriteLine($"SelectList items count: {selectList.Items.Cast<SelectListItem>().Count()}");
+
             ViewData["CurrentCategory"] = categoryNormalizedName;
 
             // Получение списка блюд
             var productResponse = await _productService.GetProductListAsync(categoryNormalizedName, pageNo);
             if (!productResponse.Success)
             {
-                return View(new ListModel<Dish> { Items = new List<Dish>() });
+                return NotFound(productResponse.ErrorMessage);
             }
-            return View(productResponse.Data ?? new ListModel<Dish> { Items = new List<Dish>() });
+
+            return View("~/Views/Home/Index.cshtml", productResponse.Data);
         }
     }
 }

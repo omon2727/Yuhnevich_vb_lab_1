@@ -1,112 +1,119 @@
-﻿@{
-	ViewBag.Title = "Index page";
-	Layout = "~/Views/Shared/_Layout.cshtml";
-	var lst = ViewData["Lst"] as SelectList;
-
+﻿@model Yuhnevich_vb_lab.Domain.Models.ListModel<Yuhnevich_vb_lab.Domain.Entities.Dish>
+@using Microsoft.AspNetCore.Mvc.Rendering
+@using Yuhnevich_vb_lab.Domain.Entities
+@{
+    ViewBag.Title = "Меню кафе";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<!-- Содержимое -->
+<h2>@ViewBag.Title</h2>
 
+<!-- Фильтр по категориям -->
+<div class="mb-3">
+    <form asp-action="Index" asp-controller="Home" method="get">
+        <label for="categoryNormalizedName">Выберите категорию:</label>
+        <select id="categoryNormalizedName" name="categoryNormalizedName" asp-items="@ViewData["Categories"] as SelectList" class="form-control" onchange="this.form.submit()">
+            <option value="">Все категории</option>
+        </select>
+    </form>
+</div>
 
+<!-- Список блюд -->
+@if (Model.Items != null && Model.Items.Any())
+{
+    <div class="row">
+        @foreach (var dish in Model.Items)
+        {
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    @if (!string.IsNullOrEmpty(dish.Image))
+                    {
+                        <img src="@dish.Image" class="card-img-top" alt="@dish.Name" style="height: 200px; object-fit: cover;" />
+                    }
+                    else
+                    {
+                        <img src="/images/placeholder.jpg" class="card-img-top" alt="Нет изображения" style="height: 200px; object-fit: cover;" />
+                    }
+                    <div class="card-body">
+                        <h5 class="card-title">@dish.Name</h5>
+                        <p class="card-text">@dish.Description</p>
+                        <p class="card-text"><strong>Цена:</strong> @dish.Price руб.</p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <p>Блюда не найдены.</p>
+}
 
-
-
-<h2>@ViewData["Text"]</h2>
-<h2>Список</h2>
-
-<ol type="A">
-	@for (int i = 1; i < 6; i++)
-	{
-		<li>элемент @i списка</li>
-	}
-</ol>
-
-
+<!-- Форма (сохранена из вашего кода) -->
 <hr />
 <h2>Форма</h2>
-
-<form role="form" method="post" >
-	<select asp-items="@lst" name="list"></select>
-@* 	<div class="row">
-		<div class="col-5m-10 offset-5m-2">
-			<select>
-				<option value="1">Item 1</option>
-				<option value="2">Item 2</option>
-				<option value="3">Item 3</option>
-			</select>
-			</div>
-			</div> *@
-	
-			<table style="width: 100%"  >
-				<colgroup>
-					<col span="1" style="width: 13%;">
-				</colgroup>
-		
-				<tr>
-					<td> </td>
-					<td>
-						<div>
-							<input name="check1" type="checkbox" id="scales" />
-							<label for="scales">Чек-бокс 1</label>
-						</div>
-					</td>
-				</tr>
-				<tr>
-					<td> </td>
-					<td>
-						<div>
-							<input name="check2" type="checkbox" id="scales2" />
-							<label for="scales2">Чек-бокс 2</label>
-						</div>
-					</td>
-				</tr>
-				<tr >
-					<td></td>
-					<td>
-						<div class="d-flex form-group mb-3">
-							<div class="form-check me-4">
-								<input name="radio1" class="form-check-input" type="radio" id="flexRadioDefault1">
-								<label class="form-check-label" for="flexRadioDefault1">
-									Радио-1
-								</label>
-							</div>
-							<div class="form-check me-4">
-								<input name="radio2" class="form-check-input" type="radio" id="flexRadioDefault2">
-								<label class="form-check-label" for="flexRadioDefault1">
-									Радио-2
-								</label>
-							</div>
-							<div class="form-check me-4">
-								<input name="radio3" class="form-check-input" type="radio" id="flexRadioDefault3">
-								<label class="form-check-label" for="flexRadioDefault1">
-									Радио-3
-								</label>
-							</div>
-						</div>
-					</td>
-				</tr>
-				<tr>
-					<td>Логин:</td>
-					<td>
-						<nav class="navbar navbar-light bg-light">
-							<input name="login" id="log" class="form-control mr-sm-2" type="search" placeholder="Введите имя..." aria-label="Search">
-						</nav>
-					</td>
-				</tr>
-				<tr>
-					<td>Пароль:</td>
-					<td>
-						<nav class="navbar navbar-light bg-light">
-							<input name="password" id="pass" class="form-control mr-sm-2" type="password" placeholder="Введите пароль..." aria-label="Search">
-						</nav>
-					</td>
-				</tr>
-				<tr>
-			
-					<td>
-						<button type="submit" class="btn btn-primary">Отправить</button>
-					</td>
-				</tr>
-			</table>
-		</form>
-
+<form role="form" method="post">
+    <table style="width: 100%">
+        <colgroup>
+            <col span="1" style="width: 13%;">
+        </colgroup>
+        <tr>
+            <td></td>
+            <td>
+                <div>
+                    <input name="check1" type="checkbox" id="scales" />
+                    <label for="scales">Чек-бокс 1</label>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <div>
+                    <input name="check2" type="checkbox" id="scales2" />
+                    <label for="scales2">Чек-бокс 2</label>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <div class="d-flex form-group mb-3">
+                    <div class="form-check me-4">
+                        <input name="radio1" class="form-check-input" type="radio" id="flexRadioDefault1">
+                        <label class="form-check-label" for="flexRadioDefault1">Радио-1</label>
+                    </div>
+                    <div class="form-check me-4">
+                        <input name="radio2" class="form-check-input" type="radio" id="flexRadioDefault2">
+                        <label class="form-check-label" for="flexRadioDefault2">Радио-2</label>
+                    </div>
+                    <div class="form-check me-4">
+                        <input name="radio3" class="form-check-input" type="radio" id="flexRadioDefault3">
+                        <label class="form-check-label" for="flexRadioDefault3">Радио-3</label>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>Логин:</td>
+            <td>
+                <nav class="navbar navbar-light bg-light">
+                    <input name="login" id="log" class="form-control mr-sm-2" type="search" placeholder="Введите имя..." aria-label="Search">
+                </nav>
+            </td>
+        </tr>
+        <tr>
+            <td>Пароль:</td>
+            <td>
+                <nav class="navbar navbar-light bg-light">
+                    <input name="password" id="pass" class="form-control mr-sm-2" type="password" placeholder="Введите пароль..." aria-label="Search">
+                </nav>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button type="submit" class="btn btn-primary">Отправить</button>
+            </td>
+        </tr>
+    </table>
+</form>

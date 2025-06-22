@@ -1,7 +1,7 @@
 ﻿using Yuhnevich_vb_lab.Domain.Entities;
 using Yuhnevich_vb_lab.Domain.Models;
 
-namespace Yuhnevich_vb_lab.Services;
+namespace Yuhnevich_vb_lab.Services.CategoryService;
 
 public interface ICategoryService
 {
