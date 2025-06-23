@@ -3,12 +3,12 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Threading.Tasks;
 using Yuhnevich_vb_lab.Domain.Entities;
 using Yuhnevich_vb_lab.Domain.Models;
-using Yuhnevich_vb_lab.Services;
 using Yuhnevich_vb_lab.Services.CategoryService;
 using Yuhnevich_vb_lab.Services.ProductService;
 
 namespace Yuhnevich_vb_lab.Controllers
 {
+    [Route("Catalog")] // Задаем базовый маршрут для контроллера
     public class ProductController : Controller
     {
         private readonly IProductService _productService;
@@ -20,7 +20,10 @@ namespace Yuhnevich_vb_lab.Controllers
             _categoryService = categoryService;
         }
 
-        public async Task<IActionResult> Index(string? categoryNormalizedName, int pageNo = 1)
+        [HttpGet]
+        [Route("")] // Обрабатывает /Catalog
+        [Route("{category?}")] // Обрабатывает /Catalog/{category}
+        public async Task<IActionResult> Index(string? category, int pageNo = 1)
         {
             // Получение списка категорий
             var categoryResponse = await _categoryService.GetCategoryListAsync();
@@ -30,24 +33,14 @@ namespace Yuhnevich_vb_lab.Controllers
                 return NotFound(categoryResponse.ErrorMessage ?? "Categories not found.");
             }
 
-            // Отладка: вывести категории в консоль
-            Console.WriteLine($"Categories count: {categoryResponse.Data.Count}");
-            foreach (var category in categoryResponse.Data)
-            {
-                Console.WriteLine($"Category: {category.Name}, NormalizedName: {category.NormalizedName}");
-            }
-
-            // Формирование SelectList
-            var selectList = new SelectList(categoryResponse.Data, "NormalizedName", "Name", categoryNormalizedName);
+            // Формирование SelectList для категорий
+            var selectList = new SelectList(categoryResponse.Data, "NormalizedName", "Name", category);
             ViewData["Categories"] = selectList;
 
-            // Отладка: проверить содержимое SelectList
-            Console.WriteLine($"SelectList items count: {selectList.Items.Cast<SelectListItem>().Count()}");
-
-            ViewData["CurrentCategory"] = categoryNormalizedName;
+            ViewData["CurrentCategory"] = category;
 
             // Получение списка блюд
-            var productResponse = await _productService.GetProductListAsync(categoryNormalizedName, pageNo);
+            var productResponse = await _productService.GetProductListAsync(category, pageNo);
             if (!productResponse.Success)
             {
                 return NotFound(productResponse.ErrorMessage);

@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,19 +14,18 @@ namespace Yuhnevich_vb_lab.Services
 {
     public class MemoryProductService : IProductService
     {
-        private List<Dish> _dishes;
-        private List<Category> _categories;
-        private const int PageSize = 4;
+        private readonly List<Dish> _dishes;
+        private readonly List<Category> _categories;
+        private readonly int _pageSize;
 
-        public MemoryProductService(ICategoryService categoryService)
+        public MemoryProductService(
+            [FromServices] IConfiguration config,
+            ICategoryService categoryService)
         {
             _categories = categoryService.GetCategoryListAsync().Result.Data;
-            _dishes = new List<Dish>();
-            SetupData();
-        }
+            _pageSize = config.GetValue<int>("ItemsPerPage", 3);
 
-        private void SetupData()
-        {
+            // Инициализация _dishes в конструкторе
             _dishes = new List<Dish>
             {
                 new Dish
@@ -78,6 +79,7 @@ namespace Yuhnevich_vb_lab.Services
         public Task<ResponseData<ListModel<Dish>>> GetProductListAsync(string? categoryNormalizedName, int pageNo = 1)
         {
             var query = _dishes.AsQueryable();
+
             if (!string.IsNullOrEmpty(categoryNormalizedName))
             {
                 var category = _categories.FirstOrDefault(c => c.NormalizedName.Equals(categoryNormalizedName, StringComparison.OrdinalIgnoreCase));
@@ -96,10 +98,20 @@ namespace Yuhnevich_vb_lab.Services
                 }
             }
 
-            var items = query.ToList();
+            int totalItems = query.Count();
+            int totalPages = (int)Math.Ceiling((double)totalItems / _pageSize);
+            pageNo = Math.Max(1, Math.Min(pageNo, totalPages));
+
+            var items = query
+                .Skip((pageNo - 1) * _pageSize)
+                .Take(_pageSize)
+                .ToList();
+
             var model = new ListModel<Dish>
             {
-                Items = items ?? new List<Dish>()
+                Items = items ?? new List<Dish>(),
+                CurrentPage = pageNo,
+                TotalPages = totalPages
             };
 
             var result = new ResponseData<ListModel<Dish>>
