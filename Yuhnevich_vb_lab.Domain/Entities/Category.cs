@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
 namespace Yuhnevich_vb_lab.Domain.Entities
 {
-    public class Category:Entity
+    public class Category
     {
-
-
-        public string NormalizedName { get; set; } = string.Empty;
-
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string NormalizedName { get; set; }
+        [JsonIgnore]
         public List<Dish> Dishes { get; set; } = new List<Dish>();
     }
 }

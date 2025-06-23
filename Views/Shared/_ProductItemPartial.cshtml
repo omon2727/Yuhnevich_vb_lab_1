@@ -1,32 +1,13 @@
 ﻿@model Yuhnevich_vb_lab.Domain.Entities.Dish
 
-@{
-    // Получение текущего URL для returnUrl
-    var request = ViewContext.HttpContext.Request;
-    var returnUrl = request.Path + request.QueryString.ToUriComponent();
-}
-
-<div class="col-md-4 mb-3">
-    <div class="card">
-        @if (!string.IsNullOrEmpty(Model.Image))
-        {
-            <img src="@Model.Image" class="card-img-top" alt="@Model.Name" style="height: 200px; object-fit: cover;" />
-        }
-        else
-        {
-            <img src="/images/placeholder.jpg" class="card-img-top" alt="Нет изображения" style="height: 200px; object-fit: cover;" />
-        }
+<div class="col-md-4 col-sm-6 col-12">
+    <div class="card mb-4">
+        <img src="@(Model.Image ?? "/images/placeholder.jpg")" class="card-img-top" style="max-height: 200px; object-fit: cover; width: 100%;" alt="@Model.Name">
         <div class="card-body">
             <h5 class="card-title">@Model.Name</h5>
             <p class="card-text">@Model.Description</p>
-            <p class="card-text"><strong>Цена:</strong> @Model.Price руб.</p>
-            <form asp-controller="Cart" asp-action="Add" method="post">
-                <input type="hidden" name="Id" value="@Model.Id" />
-                <input type="hidden" name="returnUrl" value="@returnUrl" />
-                <button type="submit" class="btn btn-primary">
-                    <i class="fa-solid fa-cart-shopping me-2"></i>Добавить в корзину
-                </button>
-            </form>
+            <p class="card-text"><strong>Цена:</strong> @Model.Price ₽</p>
+            <p class="card-text"><strong>Категория:</strong> @Model.Category?.Name</p>
         </div>
     </div>
 </div>
