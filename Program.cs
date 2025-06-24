@@ -9,7 +9,6 @@ using Yuhnevich_vb_lab.Services.ProductService;
 using Yuhnevich_vb_lab.UI.Services.CategoryService;
 using Yuhnevich_vb_lab.UI.Services.ProductService;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -30,9 +29,9 @@ builder.Services.AddDefaultIdentity<AppUser>(options =>
 
 // Регистрация HttpClient для ApiProductService и ApiCategoryService
 builder.Services.AddHttpClient<IProductService, ApiProductService>(opt =>
- opt.BaseAddress = new Uri("https://localhost:7002/api/dishes/"));
+    opt.BaseAddress = new Uri("https://localhost:7002/api/dishes/"));
 builder.Services.AddHttpClient<ICategoryService, ApiCategoryService>(opt =>
- opt.BaseAddress = new Uri("https://localhost:7002/api/categories/"));
+    opt.BaseAddress = new Uri("https://localhost:7002/api/categories/"));
 
 builder.Services.AddAuthorization(opt =>
 {
@@ -43,10 +42,6 @@ builder.Services.AddAuthorization(opt =>
 builder.Services.AddTransient<IEmailSender, NoOpEmailSender>();
 
 builder.Services.AddControllersWithViews();
-
-//// Регистрация ICategoryService как scoped сервиса
-//builder.Services.AddScoped<ICategoryService, MemoryCategoryService>();
-//builder.Services.AddScoped<IProductService, MemoryProductService>();
 
 var app = builder.Build();
 
@@ -62,18 +57,27 @@ else
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles(); // Добавлено для обработки wwwroot/images/image.png
+app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthorization();
 
 app.MapStaticAssets();
 
+// Маршрут для Image
 app.MapControllerRoute(
     name: "image",
     pattern: "Image/{action=Index}/{id?}",
     defaults: new { controller = "Image" })
     .WithStaticAssets();
 
+// Маршрут для Catalog с поддержкой category и pageNo
+app.MapControllerRoute(
+    name: "Catalog",
+    pattern: "Catalog/{category?}/{pageNo:int?}",
+    defaults: new { controller = "Product", action = "Index" })
+    .WithStaticAssets();
+
+// Маршрут по умолчанию
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")

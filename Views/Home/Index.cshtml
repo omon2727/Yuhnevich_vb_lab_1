@@ -13,13 +13,10 @@
 
 <!-- Фильтр по категориям -->
 <div class="mb-3">
-    <form asp-action="Index" asp-controller="Product" method="get">
-        <label for="category">Выберите категорию:</label>
-        <select id="category" name="category" asp-items="@ViewData["Categories"] as SelectList" class="form-control" onchange="this.form.submit()">
-            <option value="">Все категории</option>
-        </select>
-        <input type="hidden" name="pageNo" value="1" /> <!-- Сбрасываем страницу при смене категории -->
-    </form>
+    <label for="category">Выберите категорию:</label>
+    <select id="category" name="category" asp-items="@ViewData["Categories"] as SelectList" class="form-control" onchange="redirectToCategory(this.value)">
+        <option value="">Все категории</option>
+    </select>
 </div>
 
 <!-- Список блюд -->
@@ -37,18 +34,18 @@
         <ul class="pagination justify-content-center">
             <!-- Предыдущая страница -->
             <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
-                <a class="page-link" asp-action="Index" asp-controller="Product" asp-route-category="@ViewData["CurrentCategory"]" asp-route-pageNo="@(Model.CurrentPage - 1)">Предыдущая</a>
+                <a class="page-link" asp-route="Catalog" asp-route-category="@ViewData["CurrentCategory"]" asp-route-pageNo="@(Model.CurrentPage - 1)">Предыдущая</a>
             </li>
             <!-- Номера страниц -->
             @for (int i = 1; i <= Model.TotalPages; i++)
             {
                 <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
-                    <a class="page-link" asp-action="Index" asp-controller="Product" asp-route-category="@ViewData["CurrentCategory"]" asp-route-pageNo="@i">@i</a>
+                    <a class="page-link" asp-route="Catalog" asp-route-category="@ViewData["CurrentCategory"]" asp-route-pageNo="@i">@i</a>
                 </li>
             }
             <!-- Следующая страница -->
             <li class="page-item @(Model.CurrentPage == Model.TotalPages ? "disabled" : "")">
-                <a class="page-link" asp-action="Index" asp-controller="Product" asp-route-category="@ViewData["CurrentCategory"]" asp-route-pageNo="@(Model.CurrentPage + 1)">Следующая</a>
+                <a class="page-link" asp-route="Catalog" asp-route-category="@ViewData["CurrentCategory"]" asp-route-pageNo="@(Model.CurrentPage + 1)">Следующая</a>
             </li>
         </ul>
     </nav>
@@ -126,3 +123,13 @@ else
         </tr>
     </table>
 </form>
+
+<script>
+    function redirectToCategory(category) {
+        if (category) {
+            window.location.href = '/Catalog/' + category;
+        } else {
+            window.location.href = '/Catalog';
+        }
+    }
+</script>

@@ -13,42 +13,43 @@ namespace Yuhnevich_vb_lab.UI.Services.ProductService
         public async Task<ResponseData<ListModel<Dish>>> GetProductListAsync(string? categoryNormalizedName, int pageNo = 1)
         {
             var uri = httpClient.BaseAddress;
-            var queryData = new Dictionary<string, string>
-            {
-                { "pageNo", pageNo.ToString() },
-                { "pageSize", "3" } // По умолчанию 3, как в API
-            };
+            var path = string.IsNullOrEmpty(categoryNormalizedName) ? "" : $"{categoryNormalizedName}/{pageNo}";
+            var fullUri = new Uri(httpClient.BaseAddress, path);
+            Console.WriteLine($"Sending request to: {fullUri}");
 
-            if (!string.IsNullOrEmpty(categoryNormalizedName))
+            try
             {
-                queryData.Add("category", categoryNormalizedName);
-            }
+                var result = await httpClient.GetAsync(fullUri);
+                if (result.IsSuccessStatusCode)
+                {
+                    var apiResponse = await result.Content.ReadFromJsonAsync<ResponseData<ListModel<Dish>>>();
+                    return new ResponseData<ListModel<Dish>>
+                    {
+                        Data = new ListModel<Dish>
+                        {
+                            Items = apiResponse.Data.Items,
+                            CurrentPage = apiResponse.Data.CurrentPage,
+                            TotalPages = apiResponse.Data.TotalPages
+                        },
+                        Success = apiResponse.Success,
+                        ErrorMessage = apiResponse.ErrorMessage
+                    };
+                }
 
-            var query = QueryString.Create(queryData);
-            var result = await httpClient.GetAsync(uri + query.Value);
-
-            if (result.IsSuccessStatusCode)
-            {
-                // Десериализуем ответ API в ProductListModel<Dish>
-                var apiResponse = await result.Content.ReadFromJsonAsync<ResponseData<ListModel<Dish>>>();
                 return new ResponseData<ListModel<Dish>>
                 {
-                    Data = new ListModel<Dish>
-                    {
-                        Items = apiResponse.Data.Items,
-                        CurrentPage = apiResponse.Data.CurrentPage,
-                        TotalPages = apiResponse.Data.TotalPages
-                    },
-                    Success = apiResponse.Success,
-                    ErrorMessage = apiResponse.ErrorMessage
+                    Success = false,
+                    ErrorMessage = $"Ошибка чтения API: {result.StatusCode} - {result.ReasonPhrase}"
                 };
             }
-
-            return new ResponseData<ListModel<Dish>>
+            catch (Exception ex)
             {
-                Success = false,
-                ErrorMessage = "Ошибка чтения API"
-            };
+                return new ResponseData<ListModel<Dish>>
+                {
+                    Success = false,
+                    ErrorMessage = $"Исключение при вызове API: {ex.Message}"
+                };
+            }
         }
 
         public async Task<ResponseData<Dish>> GetProductByIdAsync(int id)

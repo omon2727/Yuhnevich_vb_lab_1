@@ -8,7 +8,7 @@ using Yuhnevich_vb_lab.Services.ProductService;
 
 namespace Yuhnevich_vb_lab.Controllers
 {
-    [Route("Catalog")] // Задаем базовый маршрут для контроллера
+    [Route("Catalog")] // Базовый маршрут для контроллера
     public class ProductController : Controller
     {
         private readonly IProductService _productService;
@@ -22,7 +22,7 @@ namespace Yuhnevich_vb_lab.Controllers
 
         [HttpGet]
         [Route("")] // Обрабатывает /Catalog
-        [Route("{category?}")] // Обрабатывает /Catalog/{category}
+        [Route("{category?}/{pageNo:int?}")] // Обрабатывает /Catalog/{category}/{pageNo} или /Catalog/{category}
         public async Task<IActionResult> Index(string? category, int pageNo = 1)
         {
             // Получение списка категорий
@@ -36,7 +36,6 @@ namespace Yuhnevich_vb_lab.Controllers
             // Формирование SelectList для категорий
             var selectList = new SelectList(categoryResponse.Data, "NormalizedName", "Name", category);
             ViewData["Categories"] = selectList;
-
             ViewData["CurrentCategory"] = category;
 
             // Получение списка блюд
