@@ -8,6 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Yuhnevich_vb_lab.Domain\**" />
+    <Content Remove="Yuhnevich_vb_lab.Domain\**" />
+    <EmbeddedResource Remove="Yuhnevich_vb_lab.Domain\**" />
+    <None Remove="Yuhnevich_vb_lab.Domain\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Services\CategoryService\MemoryCategoryService.cs" />
     <Compile Remove="Services\ProductService\MemoryProductService.cs" />
   </ItemGroup>
