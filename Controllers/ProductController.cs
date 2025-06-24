@@ -8,7 +8,7 @@ using Yuhnevich_vb_lab.Services.ProductService;
 
 namespace Yuhnevich_vb_lab.Controllers
 {
-    [Route("Catalog")] // Базовый маршрут для контроллера
+    [Route("Catalog")]
     public class ProductController : Controller
     {
         private readonly IProductService _productService;
@@ -19,30 +19,47 @@ namespace Yuhnevich_vb_lab.Controllers
             _productService = productService;
             _categoryService = categoryService;
         }
-
         [HttpGet]
         [Route("")] // Обрабатывает /Catalog
-        [Route("{category?}/{pageNo:int?}")] // Обрабатывает /Catalog/{category}/{pageNo} или /Catalog/{category}
-        public async Task<IActionResult> Index(string? category, int pageNo = 1)
+        public async Task<IActionResult> Index()
         {
-            // Получение списка категорий
+            return await IndexInternal(null, 1);
+        }
+
+        [HttpGet("{pageNo:int}")] // Обрабатывает /Catalog/{pageNo}
+        public async Task<IActionResult> IndexWithPageNo(int pageNo)
+        {
+            return await IndexInternal(null, pageNo);
+        }
+
+        [HttpGet("{category}/{pageNo:int?}")] // Обрабатывает /Catalog/{category}/{pageNo}
+        public async Task<IActionResult> IndexWithCategory(string category, int pageNo = 1)
+        {
+            return await IndexInternal(category, pageNo);
+        }
+
+        private async Task<IActionResult> IndexInternal(string? category, int pageNo)
+        {
+            Console.WriteLine($"ProductController.IndexInternal: Category={category}, PageNo={pageNo}");
+
             var categoryResponse = await _categoryService.GetCategoryListAsync();
             if (!categoryResponse.Success || categoryResponse.Data == null)
             {
                 Console.WriteLine($"Category error: {categoryResponse.ErrorMessage ?? "Data is null"}");
-                return NotFound(categoryResponse.ErrorMessage ?? "Categories not found.");
+                ViewData["Categories"] = new SelectList(new List<Category>(), "NormalizedName", "Name");
             }
-
-            // Формирование SelectList для категорий
-            var selectList = new SelectList(categoryResponse.Data, "NormalizedName", "Name", category);
-            ViewData["Categories"] = selectList;
+            else
+            {
+                ViewData["Categories"] = new SelectList(categoryResponse.Data, "NormalizedName", "Name", category);
+            }
             ViewData["CurrentCategory"] = category;
 
-            // Получение списка блюд
             var productResponse = await _productService.GetProductListAsync(category, pageNo);
-            if (!productResponse.Success)
+            Console.WriteLine($"Product response: Success={productResponse.Success}, ErrorMessage={productResponse.ErrorMessage}, ItemsCount={productResponse.Data?.Items?.Count ?? 0}, CurrentPage={productResponse.Data?.CurrentPage ?? 0}, TotalPages={productResponse.Data?.TotalPages ?? 0}");
+            if (!productResponse.Success || productResponse.Data == null)
             {
-                return NotFound(productResponse.ErrorMessage);
+                Console.WriteLine($"Product error: {productResponse.ErrorMessage}");
+                return View("~/Views/Home/Index.cshtml", new ListModel<Dish> { Items = new List<Dish>() });
             }
 
             return View("~/Views/Home/Index.cshtml", productResponse.Data);

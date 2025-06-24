@@ -12,22 +12,35 @@ namespace Yuhnevich_vb_lab.UI.Services.ProductService
     {
         public async Task<ResponseData<ListModel<Dish>>> GetProductListAsync(string? categoryNormalizedName, int pageNo = 1)
         {
-            var uri = httpClient.BaseAddress;
-            var path = string.IsNullOrEmpty(categoryNormalizedName) ? "" : $"{categoryNormalizedName}/{pageNo}";
-            var fullUri = new Uri(httpClient.BaseAddress, path);
-            Console.WriteLine($"Sending request to: {fullUri}");
+            var path = string.IsNullOrEmpty(categoryNormalizedName)
+                ? (pageNo == 1 ? "" : $"page/{pageNo}")
+                : $"{categoryNormalizedName}/{pageNo}";
+            var fullUri = new Uri(httpClient.BaseAddress + path, UriKind.RelativeOrAbsolute);
+            Console.WriteLine($"ApiProductService: Sending request to: {fullUri}");
 
             try
             {
                 var result = await httpClient.GetAsync(fullUri);
+                Console.WriteLine($"ApiProductService: StatusCode={result.StatusCode}, ReasonPhrase={result.ReasonPhrase}");
                 if (result.IsSuccessStatusCode)
                 {
                     var apiResponse = await result.Content.ReadFromJsonAsync<ResponseData<ListModel<Dish>>>();
+                    if (apiResponse == null || apiResponse.Data == null)
+                    {
+                        Console.WriteLine("ApiProductService: apiResponse or apiResponse.Data is null");
+                        return new ResponseData<ListModel<Dish>>
+                        {
+                            Success = false,
+                            ErrorMessage = "API вернул пустой или некорректный ответ"
+                        };
+                    }
+
+                    Console.WriteLine($"ApiProductService: ItemsCount={apiResponse.Data.Items?.Count ?? 0}, CurrentPage={apiResponse.Data.CurrentPage}, TotalPages={apiResponse.Data.TotalPages}");
                     return new ResponseData<ListModel<Dish>>
                     {
                         Data = new ListModel<Dish>
                         {
-                            Items = apiResponse.Data.Items,
+                            Items = apiResponse.Data.Items ?? new List<Dish>(),
                             CurrentPage = apiResponse.Data.CurrentPage,
                             TotalPages = apiResponse.Data.TotalPages
                         },
@@ -36,6 +49,7 @@ namespace Yuhnevich_vb_lab.UI.Services.ProductService
                     };
                 }
 
+                Console.WriteLine($"ApiProductService: Error: {result.StatusCode} - {result.ReasonPhrase}");
                 return new ResponseData<ListModel<Dish>>
                 {
                     Success = false,
@@ -44,6 +58,7 @@ namespace Yuhnevich_vb_lab.UI.Services.ProductService
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"ApiProductService: Exception: {ex.Message}");
                 return new ResponseData<ListModel<Dish>>
                 {
                     Success = false,
@@ -51,6 +66,8 @@ namespace Yuhnevich_vb_lab.UI.Services.ProductService
                 };
             }
         }
+
+
 
         public async Task<ResponseData<Dish>> GetProductByIdAsync(int id)
         {

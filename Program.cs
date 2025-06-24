@@ -27,7 +27,6 @@ builder.Services.AddDefaultIdentity<AppUser>(options =>
 })
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
-// Регистрация HttpClient для ApiProductService и ApiCategoryService
 builder.Services.AddHttpClient<IProductService, ApiProductService>(opt =>
     opt.BaseAddress = new Uri("https://localhost:7002/api/dishes/"));
 builder.Services.AddHttpClient<ICategoryService, ApiCategoryService>(opt =>
@@ -70,14 +69,32 @@ app.MapControllerRoute(
     defaults: new { controller = "Image" })
     .WithStaticAssets();
 
-// Маршрут для Catalog с поддержкой category и pageNo
+// Маршрут для главной страницы
 app.MapControllerRoute(
-    name: "Catalog",
-    pattern: "Catalog/{category?}/{pageNo:int?}",
+    name: "home",
+    pattern: "{pageNo:int?}",
+    defaults: new { controller = "Home", action = "Index" })
+    .WithStaticAssets();
+
+// Маршруты для Catalog
+app.MapControllerRoute(
+    name: "CatalogDefault",
+    pattern: "Catalog",
     defaults: new { controller = "Product", action = "Index" })
     .WithStaticAssets();
 
-// Маршрут по умолчанию
+app.MapControllerRoute(
+    name: "CatalogPage",
+    pattern: "Catalog/{pageNo:int}",
+    defaults: new { controller = "Product", action = "IndexWithPageNo" })
+    .WithStaticAssets();
+
+app.MapControllerRoute(
+    name: "CatalogCategory",
+    pattern: "Catalog/{category}/{pageNo:int?}",
+    defaults: new { controller = "Product", action = "IndexWithCategory" })
+    .WithStaticAssets();
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")

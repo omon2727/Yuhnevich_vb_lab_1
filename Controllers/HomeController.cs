@@ -20,9 +20,11 @@ namespace Yuhnevich_vb_lab.Controllers
             _categoryService = categoryService;
         }
 
+        // HomeController.cs
         public async Task<IActionResult> Index(string? categoryNormalizedName, int pageNo = 1)
         {
-            // Получение списка категорий
+            Console.WriteLine($"HomeController.Index: Category={categoryNormalizedName}, PageNo={pageNo}");
+
             var categoryResponse = await _categoryService.GetCategoryListAsync();
             if (!categoryResponse.Success || categoryResponse.Data == null)
             {
@@ -35,13 +37,15 @@ namespace Yuhnevich_vb_lab.Controllers
             }
             ViewData["CurrentCategory"] = categoryNormalizedName;
 
-            // Получение списка блюд
             var productResponse = await _productService.GetProductListAsync(categoryNormalizedName, pageNo);
-            if (!productResponse.Success)
+            Console.WriteLine($"Product response: Success={productResponse.Success}, ErrorMessage={productResponse.ErrorMessage}, ItemsCount={productResponse.Data?.Items?.Count ?? 0}, CurrentPage={productResponse.Data?.CurrentPage ?? 0}, TotalPages={productResponse.Data?.TotalPages ?? 0}");
+            if (!productResponse.Success || productResponse.Data == null)
             {
+                Console.WriteLine($"Product error: {productResponse.ErrorMessage}");
                 return View(new ListModel<Dish> { Items = new List<Dish>() });
             }
-            return View(productResponse.Data ?? new ListModel<Dish> { Items = new List<Dish>() });
+
+            return View(productResponse.Data);
         }
     }
 }
