@@ -1,30 +1,42 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
-using Yuhnevich_vb_lab.Data;
+using System.Threading.Tasks;
 using Yuhnevich_vb_lab.Domain.Entities;
+using Yuhnevich_vb_lab.Domain.Models;
+using Yuhnevich_vb_lab.Services.ProductService;
 
 namespace Yuhnevich_vb_lab.Areas.Admin.Pages
 {
     public class IndexModel : PageModel
     {
-        private readonly Yuhnevich_vb_lab.Data.DataDbContext _context;
+        private readonly IProductService _productService;
 
-        public IndexModel(Yuhnevich_vb_lab.Data.DataDbContext context)
+        public IndexModel(IProductService productService)
         {
-            _context = context;
+            _productService = productService;
         }
 
-        public IList<Dish> Dish { get;set; } = default!;
+        public IList<Dish> Dish { get; set; } = new List<Dish>();
+        public int CurrentPage { get; set; }
+        public int TotalPages { get; set; }
 
-        public async Task OnGetAsync()
+        public async Task OnGetAsync(int pageNo = 1)
         {
-            Dish = await _context.Dishes
-                .Include(d => d.Category).ToListAsync();
+            var response = await _productService.GetProductListAsync(null, pageNo);
+            if (response.Success && response.Data != null)
+            {
+                Dish = response.Data.Items ?? new List<Dish>();
+                CurrentPage = response.Data.CurrentPage;
+                TotalPages = response.Data.TotalPages;
+            }
+            else
+            {
+                Dish = new List<Dish>();
+                CurrentPage = 1;
+                TotalPages = 1;
+            }
+
+            Console.WriteLine($"IndexModel.OnGetAsync: PageNo={pageNo}, Dish count={Dish.Count}, CurrentPage={CurrentPage}, TotalPages={TotalPages}");
         }
     }
 }

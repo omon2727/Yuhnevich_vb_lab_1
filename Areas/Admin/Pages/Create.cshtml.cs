@@ -13,6 +13,8 @@ namespace Yuhnevich_vb_lab.Areas.Admin.Pages
     public class CreateModel : PageModel
     {
         private readonly Yuhnevich_vb_lab.Data.DataDbContext _context;
+        public int Qty { get; set; }
+
 
         public CreateModel(Yuhnevich_vb_lab.Data.DataDbContext context)
         {
