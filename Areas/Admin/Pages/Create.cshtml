@@ -1,52 +1,80 @@
 ﻿@page
-@model Yuhnevich_vb_lab.Areas.Admin.Pages.CreateModel
+@model Yuhnevich_vb_lab.Areas.Admin.Pages.Dishes.CreateModel
+@{
+    ViewData["Title"] = "Создать блюдо";
+}
 
-        @{
-        ViewData["Title"] = "Create";
-        }
-        
-        <h1>Create</h1>
-        
+<h1>Создать блюдо</h1>
 
-
-    <h4>Dish @Model.Qty</h4>
-    <hr />
-    <div class="row">
+<h4>Новое блюдо</h4>
+<hr />
+@if (TempData["Warning"] != null)
+{
+    <div class="alert alert-warning" role="alert">
+        @TempData["Warning"]
+    </div>
+}
+<div class="row">
     <div class="col-md-4">
-    <form method="post">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Dish.Description" class="control-label"></label>
+        <form method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="mb-3">
+                <label asp-for="Dish.Name" class="form-label">Название</label>
+                <input asp-for="Dish.Name" class="form-control" required />
+                <span asp-validation-for="Dish.Name" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Dish.Description" class="form-label">Описание</label>
                 <input asp-for="Dish.Description" class="form-control" />
                 <span asp-validation-for="Dish.Description" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Dish.CategoryId" class="control-label"></label>
-                <select asp-for="Dish.CategoryId" class ="form-control" asp-items="ViewBag.CategoryId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="Dish.Price" class="control-label"></label>
-                <input asp-for="Dish.Price" class="form-control" />
+            <div class="mb-3">
+                <label asp-for="Dish.Price" class="form-label">Цена</label>
+                <input asp-for="Dish.Price" class="form-control" type="number" step="0.01" required />
                 <span asp-validation-for="Dish.Price" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Dish.Image" class="control-label"></label>
-                <input asp-for="Dish.Image" class="form-control" />
-                <span asp-validation-for="Dish.Image" class="text-danger"></span>
+            <div class="mb-3">
+                <label asp-for="Dish.CategoryId" class="form-label">Категория</label>
+                <select asp-for="Dish.CategoryId" asp-items="ViewBag.CategoryId" class="form-control" required>
+                    <option value="">Выберите категорию</option>
+                </select>
+                <span asp-validation-for="Dish.CategoryId" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Dish.Name" class="control-label"></label>
-                <input asp-for="Dish.Name" class="form-control" />
-                <span asp-validation-for="Dish.Name" class="text-danger"></span>
+            <div class="mb-3">
+                <label for="Image" class="form-label">Изображение</label>
+                <input type="file" name="Image" id="Image" class="form-control" accept="image/*" />
+                <span asp-validation-for="Image" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+            <div class="mb-3">
+                <input type="submit" value="Создать" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-page="Index">Back to List</a>
+    <a asp-page="Index" class="btn btn-secondary">Назад к списку</a>
 </div>
 
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        // Клиентская валидация размера файла и отображение имени файла
+        document.getElementById('Image').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                console.log(`Selected file: ${file.name}, Size: ${file.size}, Type: ${file.type}`);
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('Файл слишком большой, максимум 5 МБ');
+                    e.target.value = '';
+                }
+                if (!file.type.startsWith('image/')) {
+                    alert('Файл должен быть изображением (например, JPEG или PNG)');
+                    e.target.value = '';
+                }
+            }
+        });
+    </script>
+}

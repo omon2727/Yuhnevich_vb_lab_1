@@ -4,11 +4,15 @@ using System.Threading.Tasks;
 using Yuhnevich_vb_lab.Domain.Entities;
 using Yuhnevich_vb_lab.Domain.Models;
 using Yuhnevich_vb_lab.Services.ProductService;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Yuhnevich_vb_lab.Areas.Admin.Pages
 {
+    [Authorize(Policy = "admin")] // Добавляем политику авторизации
     public class IndexModel : PageModel
     {
+
+
         private readonly IProductService _productService;
 
         public IndexModel(IProductService productService)
