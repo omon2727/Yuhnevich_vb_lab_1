@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yuhnevich_vb_lab.Domain", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yuhnevich_vb_lab.API", "..\Yuhnevich_vb_lab.API\Yuhnevich_vb_lab.API.csproj", "{89B8201B-E5A0-4129-ACE6-4BE54D9FCCBF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yuhnevich_vb_lab.Blazor", "..\Yuhnevich_vb_lab.Blazor\Yuhnevich_vb_lab.Blazor.csproj", "{17F97BCB-695C-492F-BEE2-7D8AAEBB99BE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{89B8201B-E5A0-4129-ACE6-4BE54D9FCCBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{89B8201B-E5A0-4129-ACE6-4BE54D9FCCBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{89B8201B-E5A0-4129-ACE6-4BE54D9FCCBF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17F97BCB-695C-492F-BEE2-7D8AAEBB99BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17F97BCB-695C-492F-BEE2-7D8AAEBB99BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17F97BCB-695C-492F-BEE2-7D8AAEBB99BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17F97BCB-695C-492F-BEE2-7D8AAEBB99BE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
